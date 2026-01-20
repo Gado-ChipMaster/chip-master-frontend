@@ -24,10 +24,10 @@ const App = () => {
         const config = response.data;
         if (config) {
           const root = document.documentElement;
-          root.style.setProperty('--color-primary', config.primary_color);
-          root.style.setProperty('--color-secondary', config.secondary_color);
-          root.style.setProperty('--color-bg', config.background_color);
-          root.style.setProperty('--color-text', config.text_color);
+          root.style.setProperty('--color-primary', config.primary_color || '#6366f1');
+          root.style.setProperty('--color-secondary', config.secondary_color || '#4f46e5');
+          root.style.setProperty('--color-bg', config.background_color || '#0f172a');
+          root.style.setProperty('--color-text', config.text_color || '#f8fafc');
           
           if (config.background_color) {
             document.body.style.backgroundColor = config.background_color;
