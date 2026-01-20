@@ -27,11 +27,25 @@ const Register = () => {
       console.log('Registration successful:', response.data);
       navigate('/login');
     } catch (err) {
-      console.error('Registration error:', err);
-      console.error('Error response:', err.response?.data);
-      const errorMessage = err.response?.data?.detail || 
-                          JSON.stringify(err.response?.data) || 
-                          'Registration failed. Please check your inputs.';
+      const errorData = err.response?.data;
+      let errorMessage = 'Registration failed. Please check your inputs.';
+      
+      if (errorData) {
+        if (typeof errorData === 'string') {
+          errorMessage = errorData;
+        } else if (errorData.detail) {
+          errorMessage = errorData.detail;
+        } else {
+          // Join the first error message of each field
+          errorMessage = Object.entries(errorData)
+            .map(([field, errors]) => {
+              const fieldName = field.charAt(0).toUpperCase() + field.slice(1).replace('_', ' ');
+              const fieldError = Array.isArray(errors) ? errors[0] : errors;
+              return `${fieldName}: ${fieldError}`;
+            })
+            .join(' | ');
+        }
+      }
       setError(errorMessage);
     } finally {
       setLoading(false);
