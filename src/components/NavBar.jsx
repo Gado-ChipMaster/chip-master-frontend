@@ -49,7 +49,7 @@ const NavBar = () => {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-md border-b border-white/10">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-bg-custom/80 backdrop-blur-md border-b border-white/10" style={{ color: 'var(--color-text)' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           
@@ -74,9 +74,10 @@ const NavBar = () => {
                   to={link.path}
                   className={`flex items-center gap-2 text-sm font-medium transition-colors ${
                     location.pathname === link.path 
-                      ? 'text-emerald-400' 
-                      : 'text-gray-400 hover:text-white'
+                      ? 'text-primary' 
+                      : 'opacity-60 hover:opacity-100'
                   }`}
+                  style={{ color: location.pathname === link.path ? 'var(--color-primary)' : 'inherit' }}
                 >
                   {link.icon}
                   {link.title}
@@ -133,7 +134,8 @@ const NavBar = () => {
                   </Link>
                   <Link
                     to="/register"
-                    className="px-4 py-2 text-sm font-medium bg-emerald-500 text-black rounded-lg hover:bg-emerald-400 transition-colors shadow-lg shadow-emerald-500/20"
+                    className="px-4 py-2 text-sm font-medium bg-primary text-white rounded-lg hover:opacity-90 transition-colors shadow-lg shadow-primary/20"
+                    style={{ backgroundColor: 'var(--color-primary)' }}
                   >
                     Get Started
                   </Link>

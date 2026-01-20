@@ -1,7 +1,7 @@
 import React, { useRef, useState, useCallback, useEffect } from 'react';
 import Webcam from 'react-webcam';
 import Tesseract from 'tesseract.js';
-import { Camera, X, Zap, RefreshCw, ScanLine, Visibility, Sun } from 'lucide-react';
+import { Camera, X, Zap, RefreshCw, ScanLine, Eye as Visibility } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Scanner = ({ onScanResult, onClose }) => {

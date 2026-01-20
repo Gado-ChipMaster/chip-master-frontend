@@ -3,8 +3,45 @@
 @theme {
   --color-primary: var(--color-primary);
   --color-secondary: var(--color-secondary);
-  --color-background-custom: var(--color-bg);
+  --color-bg-custom: var(--color-bg);
   --color-text-custom: var(--color-text);
+  
+  /* Map common tailwind classes used in the project to our dynamic primary color */
+  --color-indigo-50: var(--color-bg);
+  --color-indigo-100: var(--color-primary);
+  --color-indigo-400: var(--color-primary);
+  --color-indigo-500: var(--color-primary);
+  --color-indigo-600: var(--color-primary);
+  --color-indigo-700: var(--color-secondary);
+  
+  --color-emerald-400: var(--color-primary);
+  --color-emerald-500: var(--color-primary);
+  --color-emerald-600: var(--color-secondary);
+
+  --color-blue-400: var(--color-primary);
+  --color-blue-500: var(--color-primary);
+  --color-blue-600: var(--color-secondary);
+
+  --color-cyan-400: var(--color-primary);
+  --color-cyan-500: var(--color-primary);
+
+  --color-purple-400: var(--color-secondary);
+  --color-purple-500: var(--color-secondary);
+  --color-purple-600: var(--color-primary);
+
+  --color-pink-400: var(--color-secondary);
+  --color-pink-500: var(--color-secondary);
+
+  --color-amber-400: var(--color-secondary);
+  --color-amber-500: var(--color-secondary);
+
+  --color-orange-400: var(--color-secondary);
+  --color-orange-500: var(--color-secondary);
+
+  --color-slate-50: var(--color-bg);
+  --color-slate-800: var(--color-bg);
+  --color-slate-900: var(--color-bg);
+  --color-slate-950: var(--color-bg);
 }
 
 :root {

@@ -8,23 +8,28 @@ import mahmoud from "../assets/mahmoud.png";
 import SliderCompany from "../components/SliderCompany";
 import { useState } from "react";
 import { useGoogleCallback } from './GoogleCallback';
+import { useUI } from '../contexts/UIContext';
 
 const Home = () => {
     const isAuthenticated = !!localStorage.getItem('token');
     const [showAuthModal, setShowAuthModal] = useState(false);
+    const { config } = useUI();
     
     // Handle Google OAuth callback
     useGoogleCallback();
 
     return (
-      <motion.div className="bg-white dark:bg-slate-900 transition-colors">
+      <motion.div 
+        className="transition-colors" 
+        style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)' }}
+      >
       <Navbar />
       <motion.main className="w-full relative overflow-hidden min-h-[calc(100vh-100px)] w-full">
         {/* Decorative Background Elements */}
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden -z-10">
-            <div className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] bg-indigo-100/50 rounded-full blur-3xl opacity-60 mix-blend-multiply animate-blob" />
-            <div className="absolute top-[10%] -right-[10%] w-[40%] h-[40%] bg-purple-100/50 rounded-full blur-3xl opacity-60 mix-blend-multiply animate-blob animation-delay-2000" />
-            <div className="absolute -bottom-[20%] left-[20%] w-[40%] h-[40%] bg-pink-100/50 rounded-full blur-3xl opacity-60 mix-blend-multiply animate-blob animation-delay-4000" />
+            <div className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] bg-primary/20 rounded-full blur-3xl opacity-60 mix-blend-multiply animate-blob" style={{ backgroundColor: `${config?.primary_color}33` }} />
+            <div className="absolute top-[10%] -right-[10%] w-[40%] h-[40%] bg-secondary/20 rounded-full blur-3xl opacity-60 mix-blend-multiply animate-blob animation-delay-2000" style={{ backgroundColor: `${config?.secondary_color}33` }} />
+            <div className="absolute -bottom-[20%] left-[20%] w-[40%] h-[40%] bg-primary/10 rounded-full blur-3xl opacity-60 mix-blend-multiply animate-blob animation-delay-4000" style={{ backgroundColor: `${config?.primary_color}1a` }} />
         </div>
 
         <section className="flex flex-col md:flex-row items-center justify-between py-10 md:py-20 gap-8 md:gap-8 w-[95%] md:w-[90%] mx-auto">
@@ -53,8 +58,10 @@ const Home = () => {
                   />
                 ))}
               </div>
-              <p className="text-xs font-medium text-slate-600 dark:text-slate-300">
-                Trusted by <span className="text-indigo-600 font-bold">5k+</span> repair shops
+              <p className="text-xs font-medium opacity-80">
+                {config?.labels?.stats_label || (
+                  <>Trusted by <span className="font-bold" style={{ color: 'var(--color-primary)' }}>5k+</span> repair shops</>
+                )}
               </p>
             </motion.div>
 
@@ -65,10 +72,17 @@ const Home = () => {
               transition={{ duration: 0.5, delay: 0.1 }}
               className="text-center md:text-left text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight text-slate-900 dark:text-white leading-tight mb-4 md:mb-6"
             >
-              Genuine Mobile <br className="hidden md:block" />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600">
-                Phone Boards
-              </span>
+              {config?.labels?.hero_title || (
+                <>
+                  Genuine Mobile <br className="hidden md:block" />
+                  <span 
+                    className="text-transparent bg-clip-text bg-gradient-to-r"
+                    style={{ backgroundImage: `linear-gradient(to right, var(--color-primary), var(--color-secondary))` }}
+                  >
+                    Phone Boards
+                  </span>
+                </>
+              )}
             </motion.h1>
 
             {/* Description */}
@@ -78,8 +92,7 @@ const Home = () => {
               transition={{ duration: 0.5, delay: 0.2 }}
               className="text-center md:text-left text-base md:text-lg text-slate-600 dark:text-slate-300 max-w-lg mb-8 leading-relaxed px-4 md:px-0"
             >
-              Your trusted source for original, testing, and unlocked mobile logic boards. 
-              We sell high-quality parts and provide expert diagnostic services.
+              {config?.labels?.hero_subtitle || "Your trusted source for original, testing, and unlocked mobile logic boards. We sell high-quality parts and provide expert diagnostic services."}
             </motion.p>
 
             {/* Actions */}
@@ -99,7 +112,12 @@ const Home = () => {
                 }}
                 className="w-full sm:w-auto"
               >
-                <Button className="w-full sm:w-auto h-12 text-base">Get Started</Button>
+                <Button 
+                  className="w-full sm:w-auto h-12 text-base"
+                  gradientColor={config?.primary_color || '#10B981'}
+                >
+                  {config?.labels?.hero_cta || "Get Started"}
+                </Button>
               </Link>
 
               <button className="flex items-center justify-center gap-2 px-6 py-3 rounded-full text-slate-700 dark:text-slate-200 font-medium hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-all active:scale-95 group w-full sm:w-auto">
@@ -149,15 +167,23 @@ const Home = () => {
         </section>
         {/* ----------------------------------------------------------------------------- */}
         {/* ----------------------------------------------------------------------------- */}
-        <motion.section className="w-full py-24 bg-slate-50 dark:bg-slate-900/50">
+        <motion.section 
+          className="w-full py-24"
+          style={{ backgroundColor: `${config?.primary_color}0d` }}
+        >
           <motion.div className="w-[95%] mx-auto">
             <div className="text-center mb-16">
-                <span className="text-indigo-600 font-bold tracking-tighter text-sm uppercase px-4 py-1 bg-indigo-50 dark:bg-indigo-900/30 rounded-full">Pro Services</span>
+                <span 
+                  className="font-bold tracking-tighter text-sm uppercase px-4 py-1 rounded-full"
+                  style={{ color: 'var(--color-primary)', backgroundColor: `${config?.primary_color}1a` }}
+                >
+                  Pro Services
+                </span>
                 <motion.h1 className="text-4xl md:text-5xl font-black text-center mx-auto text-slate-900 dark:text-white mt-4">
-                    Neural Operations Center
+                    {config?.labels?.ops_title || "Neural Operations Center"}
                 </motion.h1>
                 <motion.p className="text-base text-slate-500 text-center mt-4 max-w-xl mx-auto">
-                    Access our proprietary search engines and technical databases designed for professional lab environments.
+                    {config?.labels?.ops_desc || "Access our proprietary search engines and technical databases designed for professional lab environments."}
                 </motion.p>
             </div>
             
@@ -184,7 +210,10 @@ const Home = () => {
 
             <div className="flex justify-center mt-12">
                 <Link to="/service">
-                    <button className="group flex items-center gap-3 px-10 py-4 bg-slate-900 dark:bg-white text-white dark:text-black font-black rounded-2xl hover:scale-105 active:scale-95 transition-all shadow-xl">
+                    <button 
+                      className="group flex items-center gap-3 px-10 py-4 font-black rounded-2xl hover:scale-105 active:scale-95 transition-all shadow-xl"
+                      style={{ backgroundColor: 'var(--color-primary)', color: 'white' }}
+                    >
                         ENTER OPERATIONS CENTER
                         <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
                     </button>
@@ -215,7 +244,7 @@ const Home = () => {
                   title: "Select Your Part",
                   description: "Browse our inventory of genuine boards for your specific model.",
                   icon: (
-                    <svg className="w-6 h-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="w-6 h-6" style={{ color: 'var(--color-primary)' }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                   )
@@ -235,7 +264,7 @@ const Home = () => {
                   title: "Fast Shipping",
                   description: "Secure packaging and expedited shipping to get you back online fast.",
                   icon: (
-                    <svg className="w-6 h-6 text-pink-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="w-6 h-6" style={{ color: 'var(--color-secondary)' }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
                     </svg>
                   )
@@ -270,10 +299,12 @@ const Home = () => {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                 >
-                  <span className="text-indigo-600 font-bold tracking-wider text-sm uppercase">Testimonials</span>
-                  <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mt-2 mb-6">Trusted by Repair Experts</h2>
-                  <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 relative">
-                    <svg className="absolute -top-4 -left-4 w-10 h-10 text-indigo-500" fill="currentColor" viewBox="0 0 24 24">
+                  <span className="font-bold tracking-wider text-sm uppercase" style={{ color: 'var(--color-primary)' }}>Testimonials</span>
+                  <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mt-2 mb-6">
+                    {config?.labels?.testi_title || "Trusted by Repair Experts"}
+                  </h2>
+                  <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 relative" style={{ backgroundColor: 'var(--color-bg)' }}>
+                    <svg className="absolute -top-4 -left-4 w-10 h-10" style={{ color: 'var(--color-primary)' }} fill="currentColor" viewBox="0 0 24 24">
                       <path d="M14.017 21L14.017 18C14.017 16.8954 14.9124 16 16.017 16H19.017C19.5693 16 20.017 15.5523 20.017 15V9C20.017 8.44772 19.5693 8 19.017 8H15.017C14.4647 8 14.017 8.44772 14.017 9V11C14.017 11.5523 13.5693 12 13.017 12H12.017V5H22.017V15C22.017 18.3137 19.3307 21 16.017 21H14.017ZM5.01691 21L5.01691 18C5.01691 16.8954 5.91234 16 7.01691 16H10.0169C10.5692 16 11.0169 15.5523 11.0169 15V9C11.0169 8.44772 10.5692 8 10.0169 8H6.01691C5.46462 8 5.01691 8.44772 5.01691 9V11C5.01691 11.5523 4.56919 12 4.01691 12H3.01691V5H13.0169V15C13.0169 18.3137 10.3306 21 7.01691 21H5.01691Z" />
                     </svg>
                     <p className="text-slate-600 dark:text-slate-300 italic mb-6 relative z-10 pt-4">
@@ -329,7 +360,10 @@ const Home = () => {
                 <div className="absolute inset-0 bg-black/10 dark:bg-black/40 pointer-events-none" /> {/* Overlay for text contrast */}
                 <div className="relative z-10 px-4">
                   <h1 className="text-2xl md:text-3xl font-medium text-white max-w-2xl mx-auto">Ready to earn more money?</h1>
-                  <div className="h-[3px] w-24 md:w-32 my-2 bg-gradient-to-l from-transparent to-indigo-600 mx-auto"></div>
+                  <div 
+                    className="h-[3px] w-24 md:w-32 my-2 mx-auto"
+                    style={{ background: `linear-gradient(to left, transparent, var(--color-primary))` }}
+                  ></div>
                   <p className="text-sm md:text-base text-white max-w-xl mx-auto opacity-90">
                       Join thousands of satisfied technicians. Get 100% original, tested mobile motherboards with a 90-day warranty.
                   </p>
@@ -343,7 +377,10 @@ const Home = () => {
                       }
                     }}
                   >
-                  <button className="px-8 py-3 mt-6 text-sm font-semibold bg-gradient-to-r from-indigo-600 to-violet-500 hover:scale-105 active:scale-95 transition-all duration-300 text-white rounded-full shadow-lg shadow-indigo-600/20">
+                  <button 
+                    className="px-8 py-3 mt-6 text-sm font-semibold hover:scale-105 active:scale-95 transition-all duration-300 text-white rounded-full shadow-lg shadow-primary/20"
+                    style={{ background: `linear-gradient(to right, var(--color-primary), var(--color-secondary))` }}
+                  >
                       Get Started
                   </button>
                   </Link>
@@ -384,29 +421,38 @@ const Home = () => {
     );
 };
 
-const ServiceCard = ({ img, title, desc, tag }) => (
-    <motion.div 
-        whileHover={{ y: -10 }}
-        className="bg-white dark:bg-slate-800 rounded-[2.5rem] overflow-hidden shadow-xl border border-slate-100 dark:border-slate-700 group h-full flex flex-col"
-    >
-        <div className="relative h-64 overflow-hidden">
-            <img src={img} alt={title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-            <div className="absolute top-6 left-6 px-4 py-1.5 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-full text-[10px] font-black tracking-widest uppercase text-indigo-600 dark:text-indigo-400 border border-white/20">
-                {tag}
+const ServiceCard = ({ img, title, desc, tag }) => {
+    const { config } = useUI();
+    return (
+        <motion.div 
+            whileHover={{ y: -10 }}
+            className="bg-white dark:bg-slate-800 rounded-[2.5rem] overflow-hidden shadow-xl border border-slate-100 dark:border-slate-700 group h-full flex flex-col"
+        >
+            <div className="relative h-64 overflow-hidden">
+                <img src={img} alt={title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                <div 
+                  className="absolute top-6 left-6 px-4 py-1.5 backdrop-blur-md rounded-full text-[10px] font-black tracking-widest uppercase border border-white/20"
+                  style={{ backgroundColor: `${config?.primary_color}cc`, color: 'white' }}
+                >
+                    {tag}
+                </div>
             </div>
-        </div>
-        <div className="p-8 flex-1 flex flex-col">
-            <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-3">
-                {title}
-            </h3>
-            <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed mb-6">
-                {desc}
-            </p>
-            <div className="mt-auto pt-4 flex items-center gap-2 text-xs font-bold text-indigo-600 dark:text-indigo-400 group-hover:gap-4 transition-all">
-                EXPLORE MODULE <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+            <div className="p-8 flex-1 flex flex-col">
+                <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-3">
+                    {title}
+                </h3>
+                <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed mb-6">
+                    {desc}
+                </p>
+                <div 
+                  className="mt-auto pt-4 flex items-center gap-2 text-xs font-bold group-hover:gap-4 transition-all"
+                  style={{ color: 'var(--color-primary)' }}
+                >
+                    EXPLORE MODULE <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                </div>
             </div>
-        </div>
-    </motion.div>
-);
+        </motion.div>
+    );
+};
 
 export default Home;

@@ -9,9 +9,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { chipService } from '../services/api';
 import Scanner from '../components/Scanner';
 import { Link, useNavigate } from 'react-router-dom';
+import { useUI } from '../contexts/UIContext';
 
 const Service = () => {
     const navigate = useNavigate();
+    const { config } = useUI();
     const [query, setQuery] = useState('');
     const [results, setResults] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -77,7 +79,10 @@ const Service = () => {
     ];
 
     return (
-        <div className="min-h-screen pt-24 px-4 pb-12 bg-[#0a0a0a] text-white selection:bg-emerald-500/30">
+        <div 
+            className="min-h-screen pt-24 px-4 pb-12 selection:bg-primary/30"
+            style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)' }}
+        >
             <div className="max-w-6xl mx-auto">
                 
                 {/* --- HEADER DASHBOARD --- */}
@@ -91,9 +96,9 @@ const Service = () => {
                             <Zap size={14} className="animate-pulse" /> CORE SYSTEM V9.4 ACTIVE
                         </div>
                         <h1 className="text-4xl md:text-5xl font-black mb-2 tracking-tight">
-                            Operations Center
+                            {config?.labels?.ops_title || "Operations Center"}
                         </h1>
-                        <p className="text-gray-500 font-medium">Enhanced Web Interface for Chip Master Suite</p>
+                        <p className="text-gray-500 font-medium">{config?.labels?.ops_desc || "Enhanced Web Interface for Chip Master Suite"}</p>
                     </div>
 
                     <div className="grid grid-cols-3 gap-4">
@@ -104,29 +109,35 @@ const Service = () => {
                 </motion.div>
 
                 {/* --- MASTER SEARCH BAR (Persistent) --- */}
-                <div className="sticky top-24 z-30 bg-[#0a0a0a]/80 backdrop-blur-xl py-4 mb-8 border-b border-white/5">
+                <div 
+                    className="sticky top-24 z-30 backdrop-blur-xl py-4 mb-8 border-b border-white/5"
+                    style={{ backgroundColor: `${config?.background_color}cc` }}
+                >
                     <div className="relative group max-w-3xl mx-auto">
                         <input
                             type="text"
                             value={query}
                             onChange={(e) => setQuery(e.target.value.toUpperCase())}
                             onKeyDown={(e) => e.key === 'Enter' && performSearch(query)}
-                            placeholder="Enter Master Chip Code..."
-                            className="w-full bg-white/5 border border-white/10 rounded-2xl py-5 pl-14 pr-44 text-lg text-white font-mono placeholder-gray-600 focus:outline-none focus:border-emerald-500/50 focus:bg-white/10 transition-all shadow-2xl"
+                            placeholder={config?.labels?.search_placeholder || "Enter Master Chip Code..."}
+                            className="w-full bg-white/5 border border-white/10 rounded-2xl py-5 pl-14 pr-44 text-lg font-mono placeholder-gray-600 focus:outline-none focus:bg-white/10 transition-all shadow-2xl"
+                            style={{ color: 'var(--color-text)', borderFocused: 'var(--color-primary)' }}
                         />
-                        <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-emerald-400 transition-colors" size={24} />
+                        <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-primary transition-colors" style={{ color: 'var(--color-primary)' }} size={24} />
                         
                         <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
                              <button 
                                 onClick={() => setShowScanner(true)}
-                                className="p-2.5 bg-emerald-500 text-black rounded-xl hover:bg-emerald-400 transition-all hover:scale-105 shadow-lg shadow-emerald-500/20"
+                                className="p-2.5 text-white rounded-xl hover:opacity-90 transition-all hover:scale-105 shadow-lg"
+                                style={{ backgroundColor: 'var(--color-primary)' }}
                                 title="Visual OCR Scanner"
                             >
                                 <Camera size={20} />
                             </button>
                             <button 
                                 onClick={() => performSearch(query)}
-                                className="px-6 py-2.5 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 rounded-xl transition-all font-bold uppercase text-xs tracking-widest"
+                                className="px-6 py-2.5 bg-primary/10 hover:bg-primary/20 rounded-xl transition-all font-bold uppercase text-xs tracking-widest border border-primary/20"
+                                style={{ color: 'var(--color-primary)', borderColor: `${config?.primary_color}33` }}
                             >
                                 Execute
                             </button>
