@@ -161,7 +161,7 @@ const Service = () => {
                                     </div>
                                 )}
 
-                                {results.length > 0 ? (
+                                {Array.isArray(results) && results.length > 0 ? (
                                     results.map((chip, idx) => (
                                         <div key={idx} className="group relative overflow-hidden bg-white/5 border border-white/5 hover:border-emerald-500/30 rounded-3xl p-8 transition-all duration-500">
                                             <div className="absolute top-0 right-0 p-8 opacity-5">
@@ -349,7 +349,7 @@ const Service = () => {
                                     </div>
                                     
                                     <div className="space-y-4">
-                                        {query && CompatibilityData[query] ? (
+                                        {query && Object.prototype.hasOwnProperty.call(CompatibilityData, query) ? (
                                             CompatibilityData[query].map((alt, i) => (
                                                 <div key={i} className="flex items-center justify-between p-4 bg-cyan-500/5 border border-cyan-500/20 rounded-xl">
                                                     <span className="text-white font-bold">{alt}</span>
