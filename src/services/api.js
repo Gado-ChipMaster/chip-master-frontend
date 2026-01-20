@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = `${import.meta.env.VITE_API_URL}/api`;
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -33,13 +33,13 @@ api.interceptors.response.use(
 );
 
 export const chipService = {
-  search: (query) => api.get(`/search/?q=${query}`),
-  contribute: (data) => api.post('/learn/', data),
-  getServices: () => api.get('/services/'),
-  login: (username, password) => api.post('/../auth/jwt/create/', { username, password }),
-  register: (userData) => api.post('/../auth/users/', userData),
-  getProfile: () => api.get('/../auth/users/me/'),
-  updateProfile: (data) => api.patch('/../auth/users/me/', data),
+  search: (query) => api.get(`/api/search/?q=${query}`),
+  contribute: (data) => api.post('/api/learn/', data),
+  getServices: () => api.get('/api/services/'),
+  login: (username, password) => api.post('/auth/jwt/create/', { username, password }),
+  register: (userData) => api.post('/auth/users/', userData),
+  getProfile: () => api.get('/auth/users/me/'),
+  updateProfile: (data) => api.patch('/auth/users/me/', data),
 };
 
 export default api;
