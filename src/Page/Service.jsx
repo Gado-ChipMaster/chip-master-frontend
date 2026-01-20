@@ -34,11 +34,21 @@ const Service = () => {
     const performSearch = async (searchTerm) => {
         if (!searchTerm) return;
         setLoading(true);
+        setResults([]); // Clear previous results
+        console.log('Initiating search for:', searchTerm);
         try {
             const response = await chipService.search(searchTerm);
-            setResults(response.data.results || response.data || []);
+            console.log('Search Raw Response:', response);
+            const data = response.data.results || response.data || [];
+            console.log('Processed Search Results:', data);
+            setResults(Array.isArray(data) ? data : []);
+            
+            // Auto-switch to search tab if results are found
+            if (activeTab !== 'search') {
+                setActiveTab('search');
+            }
         } catch (error) {
-            console.error('Search error:', error);
+            console.error('Search execution failed:', error);
             setResults([]);
         } finally {
             setLoading(false);
@@ -100,7 +110,7 @@ const Service = () => {
                             type="text"
                             value={query}
                             onChange={(e) => setQuery(e.target.value.toUpperCase())}
-                            onKeyDown={(e) => e.key === 'Enter' && (activeTab === 'search' ? performSearch(query) : null)}
+                            onKeyDown={(e) => e.key === 'Enter' && performSearch(query)}
                             placeholder="Enter Master Chip Code..."
                             className="w-full bg-white/5 border border-white/10 rounded-2xl py-5 pl-14 pr-44 text-lg text-white font-mono placeholder-gray-600 focus:outline-none focus:border-emerald-500/50 focus:bg-white/10 transition-all shadow-2xl"
                         />

@@ -10,6 +10,8 @@ const api = axios.create({
   },
 });
 
+console.log('API Base URL configured as:', API_BASE_URL);
+
 // Add a request interceptor to inject the token
 api.interceptors.request.use(
   (config) => {
@@ -17,15 +19,23 @@ api.interceptors.request.use(
     if (token) {
       config.headers['Authorization'] = `JWT ${token}`;
     }
+    console.log(`[API Request] ${config.method.toUpperCase()} ${config.url}`, config.params || '');
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => {
+    console.error('[API Request Error]', error);
+    return Promise.reject(error);
+  }
 );
 
 // Add a response interceptor to handle 401 errors globally
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    console.log(`[API Response] ${response.status} ${response.config.url}`, response.data);
+    return response;
+  },
   (error) => {
+    console.error(`[API Response Error] ${error.response?.status || 'Network Error'} ${error.config?.url}`, error.response?.data || error.message);
     if (error.response && error.response.status === 401) {
       localStorage.removeItem('token');
     }
