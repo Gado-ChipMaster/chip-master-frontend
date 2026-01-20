@@ -192,7 +192,25 @@ const Service = () => {
                                                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
                                                         <DetailBox label="Logic size" value={chip.size} />
                                                         <DetailBox label="Manufacturer" value={chip.brand} />
-                                                        <DetailBox label="Diagnostic Info" value={chip.description || "Generic Component"} />
+                                                        <div className="bg-white/5 rounded-2xl p-4 border border-white/5 hover:bg-white/10 transition-colors">
+                                                            <span className="text-[10px] text-gray-600 font-black uppercase tracking-wider block mb-2">Diagnostic Info</span>
+                                                            <div className="flex flex-wrap gap-1.5">
+                                                                {(chip.description || "Generic Component").split(',').map((label, lidx) => {
+                                                                    const isSpecial = label.toLowerCase().includes('glass') || label.toLowerCase().includes('original');
+                                                                    return (
+                                                                        <span 
+                                                                            key={lidx}
+                                                                            className={`text-[10px] font-bold px-2 py-0.5 rounded-md uppercase tracking-tight
+                                                                                ${isSpecial 
+                                                                                    ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30' 
+                                                                                    : 'bg-white/5 text-gray-400 border border-white/5'}`}
+                                                                        >
+                                                                            {label.trim()}
+                                                                        </span>
+                                                                    );
+                                                                })}
+                                                            </div>
+                                                        </div>
                                                         <div className="flex items-end justify-center md:justify-end gap-3">
                                                             <button className="p-3 bg-white/5 hover:bg-emerald-500/20 text-gray-400 hover:text-emerald-400 rounded-xl border border-white/10 hover:border-emerald-500/30 transition-all"><Share2 size={18} /></button>
                                                             <button className="p-3 bg-white/5 hover:bg-red-500/20 text-gray-400 hover:text-red-400 rounded-xl border border-white/10 hover:border-red-500/30 transition-all"><Trash2 size={18} /></button>

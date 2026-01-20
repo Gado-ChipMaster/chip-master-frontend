@@ -10,24 +10,49 @@ const Scanner = ({ onScanResult, onClose }) => {
   const [progress, setProgress] = useState(0);
   const [cameraError, setCameraError] = useState(null);
   const [isHighContrast, setIsHighContrast] = useState(false);
+  const [lastDetected, setLastDetected] = useState('');
+  const canvasRef = useRef(null);
 
-  // 🔹 Normalization: Fixing common OCR errors (mirroring Android logic)
+  // 🔹 Normalization: Non-destructive cleaning
   const normalizeOCR = (input) => {
     return input.toUpperCase()
-      .replace(/O/g, "0")
-      .replace(/I/g, "1")
-      .replace(/L/g, "1")
-      .replace(/S/g, "5")
-      .replace(/B/g, "8")
-      .replace(/Z/g, "2")
-      .replace(/[^A-Z0-9-]/g, ""); // Keep alphanumeric and hyphens
+      .replace(/[^A-Z0-9-]/g, "") // Keep alphanumeric and hyphens only
+      .trim();
   };
 
-  const capture = useCallback(() => {
-    const imageSrc = webcamRef.current.getScreenshot();
-    if (imageSrc) {
-      processImage(imageSrc);
-    }
+  const captureFrame = useCallback(() => {
+    if (!webcamRef.current) return;
+    
+    const video = webcamRef.current.video;
+    const canvas = canvasRef.current;
+    if (!video || !canvas) return;
+
+    // ROI Calculation (Matching the Sniper Box UI: 288x160px center)
+    // Sniper Box: w=72 (18rem/288px), h=40 (10rem/160px) in CSS units
+    const context = canvas.getContext('2d');
+    const videoWidth = video.videoWidth;
+    const videoHeight = video.videoHeight;
+
+    // We want the center area. 
+    // sniperW / totalW = 288 / 512 (max-w-lg is 512px)
+    // sniperH / totalH = 160 / (screen aspect)
+    // Better: We calculate relative to the container.
+    const cropWidth = videoWidth * 0.6; // 60% of width
+    const cropHeight = videoHeight * 0.3; // 30% of height
+    const startX = (videoWidth - cropWidth) / 2;
+    const startY = (videoHeight - cropHeight) / 2;
+
+    canvas.width = cropWidth;
+    canvas.height = cropHeight;
+
+    context.drawImage(
+      video,
+      startX, startY, cropWidth, cropHeight, // Source
+      0, 0, cropWidth, cropHeight // Destination
+    );
+
+    const imageSrc = canvas.toDataURL('image/jpeg', 0.9);
+    processImage(imageSrc);
   }, [webcamRef]);
 
   const processImage = async (imageSrc) => {
@@ -47,24 +72,19 @@ const Scanner = ({ onScanResult, onClose }) => {
       );
       
       const text = result.data.text;
+      setLastDetected(text.substring(0, 50).replace(/\n/g, ' ')); // UI Feedback
       
-      // 🔹 Smart Extraction: Target chip patterns (e.g., KLM... from Samsung)
+      // 🔹 Smart Extraction
       const potentialCodes = text.split(/\s+/)
         .map(w => normalizeOCR(w))
-        .filter(w => {
-          // Safety logic: must be at least 6 chars for a chip code
-          if (w.length < 6) return false;
-          // Filter out generic words
-          const blocked = ['THE', 'AND', 'CHIP', 'MADE', 'CHINA', 'SERIES'];
-          return !blocked.includes(w);
-        });
+        .filter(w => w.length >= 6);
 
       if (potentialCodes.length > 0) {
-        // Find the most "chip-like" code (usually starts with K, H, J, S, T)
         const chipPatterns = /^(K|H|J|S|T|MT|NH)/;
         const bestMatch = potentialCodes.find(c => chipPatterns.test(c)) || potentialCodes.reduce((a, b) => a.length > b.length ? a : b);
         
-        if (bestMatch.length >= 6) {
+        if (bestMatch && bestMatch.length >= 6) {
+          console.log('%c [OCR SUCCESS] Identified:', 'color: #10b981; font-weight: bold', bestMatch);
           onScanResult(bestMatch);
         }
       }
@@ -78,11 +98,11 @@ const Scanner = ({ onScanResult, onClose }) => {
   useEffect(() => {
     const interval = setInterval(() => {
         if (!isScanning && webcamRef.current) {
-            capture();
+            captureFrame();
         }
-    }, 3000);
+    }, 4000); // Slightly slower auto-scan to allow focus
     return () => clearInterval(interval);
-  }, [isScanning, capture]);
+  }, [isScanning, captureFrame]);
 
   const videoConstraints = {
     facingMode: "environment",
@@ -135,7 +155,7 @@ const Scanner = ({ onScanResult, onClose }) => {
         </div>
 
         {cameraError && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/90 text-white text-center p-8">
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/90 text-white text-center p-8 z-50">
                 <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mb-4 border border-red-500/50">
                     <X className="text-red-500" size={32} />
                 </div>
@@ -144,6 +164,9 @@ const Scanner = ({ onScanResult, onClose }) => {
                 <button onClick={onClose} className="px-6 py-2 bg-white text-black font-bold rounded-xl active:scale-95 transition-all">Go Back</button>
             </div>
         )}
+
+        {/* Hidden Canvas for ROI Processing */}
+        <canvas ref={canvasRef} className="hidden" />
 
         {/* 🎯 Sniper Box Overlay */}
         <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
@@ -166,12 +189,29 @@ const Scanner = ({ onScanResult, onClose }) => {
             />
           </div>
           
-          <div className="absolute bottom-24 text-center">
-             <div className="px-4 py-1.5 bg-black/60 backdrop-blur-md rounded-lg border border-white/10">
-                <p className="text-white font-mono text-[10px] tracking-[0.2em] font-medium uppercase">
+          <div className="absolute bottom-32 text-center w-full">
+             <div className="inline-block px-4 py-2 bg-black/60 backdrop-blur-md rounded-lg border border-white/10 mx-auto">
+                <p className="text-white font-mono text-[10px] tracking-[0.2em] font-medium uppercase mb-1">
                     Center Code in Sniper Box
                 </p>
+                {lastDetected && (
+                   <p className="text-emerald-400 text-[9px] font-bold animate-pulse truncate max-w-[200px]">
+                     RAW: {lastDetected}
+                   </p>
+                )}
              </div>
+          </div>
+
+          {/* Manual Capture Button */}
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2">
+             <button 
+                onClick={captureFrame}
+                className="w-20 h-20 rounded-full border-4 border-white/20 bg-white/5 flex items-center justify-center group active:scale-90 transition-all"
+             >
+                <div className="w-14 h-14 rounded-full bg-white group-hover:bg-emerald-400 transition-colors flex items-center justify-center shadow-xl shadow-white/10">
+                   <Camera size={28} className="text-black" />
+                </div>
+             </button>
           </div>
         </div>
 
