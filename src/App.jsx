@@ -17,29 +17,6 @@ import PrivacyPolicy from './Page/PrivacyPolicy';
 import TermsOfService from './Page/TermsOfService';
 
 const App = () => {
-  useEffect(() => {
-    const applyTheme = async () => {
-      try {
-        const response = await uiService.getActiveConfig();
-        const config = response.data;
-        if (config) {
-          const root = document.documentElement;
-          root.style.setProperty('--color-primary', config.primary_color || '#6366f1');
-          root.style.setProperty('--color-secondary', config.secondary_color || '#4f46e5');
-          root.style.setProperty('--color-bg', config.background_color || '#0f172a');
-          root.style.setProperty('--color-text', config.text_color || '#f8fafc');
-          
-          if (config.background_color) {
-            document.body.style.backgroundColor = config.background_color;
-          }
-        }
-      } catch (error) {
-        console.error('Failed to apply dynamic theme:', error);
-      }
-    };
-    applyTheme();
-  }, []);
-
   return (
     <Router>
       <div className="min-h-screen flex flex-col font-sans selection:bg-emerald-500/30" style={{ color: 'var(--color-text, white)', backgroundColor: 'var(--color-bg, #050505)' }}>

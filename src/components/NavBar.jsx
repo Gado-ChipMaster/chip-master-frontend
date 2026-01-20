@@ -4,6 +4,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import logo from '../assets/Gemini_Generated_Image_7c2ivw7c2ivw7c2i (1).png';
 import { chipService } from '../services/api';
+import { useUI } from '../contexts/UIContext';
 
 const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -12,6 +13,7 @@ const NavBar = () => {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const { config } = useUI();
 
   // Fetch user data on mount if logged in
   React.useEffect(() => {
@@ -53,9 +55,13 @@ const NavBar = () => {
           
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 group">
-            <img className='w-10 h-10' src={logo} alt="logo" />
+            <img 
+              className='w-10 h-10 object-contain' 
+              src={config?.logo_url || logo} 
+              alt="logo" 
+            />
             <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
-              CHIP MASTER
+              {config?.labels?.site_title || 'CHIP MASTER'}
             </span>
           </Link>
 
