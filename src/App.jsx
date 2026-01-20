@@ -1,7 +1,8 @@
-import React from 'react';
+import { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import NavBar from './components/NavBar';
 import Footer from './components/Footer';
+import { uiService } from './services/api';
 
 // Pages
 import Home from './Page/Home';
@@ -16,9 +17,32 @@ import PrivacyPolicy from './Page/PrivacyPolicy';
 import TermsOfService from './Page/TermsOfService';
 
 const App = () => {
+  useEffect(() => {
+    const applyTheme = async () => {
+      try {
+        const response = await uiService.getActiveConfig();
+        const config = response.data;
+        if (config) {
+          const root = document.documentElement;
+          root.style.setProperty('--color-primary', config.primary_color);
+          root.style.setProperty('--color-secondary', config.secondary_color);
+          root.style.setProperty('--color-bg', config.background_color);
+          root.style.setProperty('--color-text', config.text_color);
+          
+          if (config.background_color) {
+            document.body.style.backgroundColor = config.background_color;
+          }
+        }
+      } catch (error) {
+        console.error('Failed to apply dynamic theme:', error);
+      }
+    };
+    applyTheme();
+  }, []);
+
   return (
     <Router>
-      <div className="min-h-screen bg-[#050505] text-white flex flex-col font-sans selection:bg-emerald-500/30">
+      <div className="min-h-screen flex flex-col font-sans selection:bg-emerald-500/30" style={{ color: 'var(--color-text, white)', backgroundColor: 'var(--color-bg, #050505)' }}>
         <NavBar />
         
         <main className="flex-grow pt-16">

@@ -53,4 +53,8 @@ export const chipService = {
   updateProfile: (data) => api.patch('/auth/users/me/', data),
 };
 
+export const uiService = {
+  getActiveConfig: () => api.get('/api/admin/ui-config/active/?platform=WEB'),
+};
+
 export default api;
