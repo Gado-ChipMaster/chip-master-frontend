@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, Lock, LogIn, Loader } from 'lucide-react';
+import { User, Lock, LogIn, Loader } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { chipService } from '../services/api';
 
@@ -51,16 +51,16 @@ const Login = () => {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <label className="text-xs font-mono text-gray-500 uppercase">Username</label>
+              <label className="text-xs font-mono text-gray-500 uppercase">Username or Email</label>
               <div className="relative group">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-emerald-400 transition-colors" size={20} />
+                <User className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-emerald-400 transition-colors" size={20} />
                 <input 
                   type="text"
                   required
                   value={formData.username}
                   onChange={e => setFormData({...formData, username: e.target.value})}
                   className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-12 pr-4 text-white focus:outline-none focus:border-emerald-500/50 transition-colors"
-                  placeholder="username"
+                  placeholder="Username or Email"
                 />
               </div>
             </div>

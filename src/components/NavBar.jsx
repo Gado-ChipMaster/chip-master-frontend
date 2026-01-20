@@ -88,7 +88,7 @@ const NavBar = () => {
                     className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-white/5 transition-colors"
                   >
                     <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-emerald-500 flex items-center justify-center text-white font-bold">
-                        {user ? user.username[0].toUpperCase() : <User size={16}/>}
+                        {user && user.username ? user.username[0].toUpperCase() : <User size={16}/>}
                     </div>
                     <span className="text-sm font-medium text-white max-w-[100px] truncate">
                         {user ? user.username : 'User'}
